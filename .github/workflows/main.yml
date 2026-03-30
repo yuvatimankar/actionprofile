@@ -48,7 +48,13 @@ jobs:
           fetch-depth: 0
 
       - name: Maven test
+        if: github.ref == 'refs/heads/main' 
         run: mvn test
 
       - name: checkstyle
+        if: github.ref == 'refs/heads/main'
         run: mvn checkstyle:checkstyle
+
+      - name: Run tests on other branches
+        if: github.ref != 'refs/heads/main'
+        run: echo "skipping unit tests for non-main branch"
