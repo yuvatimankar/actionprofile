@@ -5,13 +5,13 @@ on:
       - main
 
   pull_request:
-         branches:
-          - main
+    branches:
+      - main
 
   workflow_dispatch:
 
   schedule:
-    - cron: '10 14 * * 1-5' # Runs every day at 2
+    - cron: '10 14 * * 1-5'
 
 permissions:
   contents: read
@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: code checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
         with:
           fetch-depth: 0
 
@@ -29,7 +29,7 @@ jobs:
         run: mvn clean install 
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: vprofile-app
           path: target/*.war
@@ -43,7 +43,7 @@ jobs:
     needs: build
     steps:
       - name: code checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
         with:
           fetch-depth: 0
 
@@ -70,7 +70,7 @@ jobs:
 
       - name: Run Trivy security scan
         if: github.ref == 'refs/heads/main'
-        uses: aquasecurity/trivy-action@0.29.0
+        uses: aquasecurity/trivy-action@v0.35.0
         with:
           scan-type: 'fs'
           scan-ref: .
