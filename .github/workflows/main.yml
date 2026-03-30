@@ -13,6 +13,9 @@ on:
   schedule:
     - cron: '10 14 * * 1-5'
 
+env: 
+  ECR_REPOSITORY: 'vprofile-appimage'
+
 permissions:
   contents: read
 
@@ -84,3 +87,36 @@ jobs:
         with:
           name: trivy-report
           path: trivy-report.json
+
+  BUILD_AND_PUBLISH:
+    name: Build and Publish Docker Image
+    runs-on: ubuntu-latest
+    environment: production
+    needs: [build, Testing, security-scan]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: code checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2.0.3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1.0.0
+
+      - name: Build and Push Docker Image to ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -f Docker-files/app/multistage/Dockerfile -t $ECR_REGISTRY/vprofile-app:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/vprofile-app:$IMAGE_TAG
+         
