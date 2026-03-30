@@ -64,13 +64,13 @@ jobs:
     needs: build
     steps:
       - name: code checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
         with:
           fetch-depth: 0
 
       - name: Run Trivy security scan
         if: github.ref == 'refs/heads/main'
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.29.0
         with:
           scan-type: 'fs'
           scan-ref: .
@@ -80,7 +80,7 @@ jobs:
           output: 'trivy-report.json'
 
       - name: Upload Trivy scan results as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: trivy-report
           path: trivy-report.json
