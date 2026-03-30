@@ -117,6 +117,6 @@ jobs:
           ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -f Docker-files/app/multistage/Dockerfile -t $ECR_REGISTRY/vprofile-app:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/vprofile-app:$IMAGE_TAG
+          docker build -f Docker-files/app/multistage/Dockerfile -t $ECR_REGISTRY/vprofile-appimage:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/vprofile-appimage:$IMAGE_TAG
          
